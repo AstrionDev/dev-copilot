@@ -10,6 +10,33 @@ A developer-focused chatbot agent that answers technical questions using:
 
 Designed as a portfolio-ready “agentic research” demo for Upwork profiles.
 
+## Flow Diagram
+```mermaid
+flowchart TD
+    A[CLI Input] --> B{Engine}
+    B -->|basic| C[Analyze Question]
+    B -->|langgraph| D[LangGraph StateGraph]
+    D --> C
+    C --> E{Need Clarification?}
+    E -->|yes| F[Collect Human Info]
+    E -->|no| G{Use Tools?}
+    F --> G
+    G -->|yes| H[Search + Fetch Sources]
+    G -->|no| I[Draft Answer]
+    H --> I
+    I --> J[Return JSON: answer + sources]
+
+    classDef entry fill:#E8F0FF,stroke:#2B59C3,stroke-width:1px,color:#0B1A33;
+    classDef decision fill:#FFF4CC,stroke:#D08C00,stroke-width:1px,color:#3A2B00;
+    classDef process fill:#EAF7EE,stroke:#2E7D32,stroke-width:1px,color:#0B2B12;
+    classDef output fill:#F3E8FF,stroke:#6A1B9A,stroke-width:1px,color:#2A0A3D;
+
+    class A entry;
+    class B,E,G decision;
+    class C,D,F,H,I process;
+    class J output;
+```
+
 ## What it Returns
 JSON with:
 - `answer`: final response (includes a `Sources:` section)
@@ -18,11 +45,10 @@ JSON with:
 ## Project Layout
 - `app/agent.py`: CLI entrypoint (basic engine + optional LangGraph engine).
 - `app/tools.py`: Search + fetch tools (DuckDuckGo, StackOverflow, docs search).
-- `examples/questions/`: Sample inputs.
 
 ## Run
 ```bash
-python app/agent.py --question-file examples/questions/async_fastapi.txt
+python app/agent.py --question "How do I fix pip SSL errors on macOS?"
 ```
 
 Optional:
