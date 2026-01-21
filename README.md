@@ -1,5 +1,7 @@
 # Verified Dev Copilot (LangChain + optional LangGraph)
 
+<img src="assets/dev-copilot.png" alt="Verified Dev Copilot banner" width="600">
+
 ## Overview
 A developer-focused chatbot agent that answers technical questions using:
 - DuckDuckGo web search
