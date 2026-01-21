@@ -29,12 +29,12 @@ except Exception:
     StateGraph = None  # type: ignore[assignment]
     _HAS_LANGGRAPH = False
 
+_questionary: Any = None
 try:
     import questionary as _questionary
 
     _HAS_QUESTIONARY = True
 except Exception:
-    _questionary = None
     _HAS_QUESTIONARY = False
 
 
@@ -160,6 +160,7 @@ def _clean_answer(text: str) -> str:
 
 def _prompt_choice(prompt: str, choices: list[str], default_index: int = 0) -> str:
     if _HAS_QUESTIONARY:
+        assert _questionary is not None
         default_choice = choices[default_index] if choices else None
         answer = _questionary.select(
             prompt, choices=choices, default=default_choice
@@ -191,6 +192,7 @@ def _collect_human_info(questions: list[str]) -> dict[str, str]:
     answers: dict[str, str] = {}
     for question in questions:
         if _HAS_QUESTIONARY:
+            assert _questionary is not None
             answer = _questionary.text(
                 question,
                 validate=lambda text: True if text.strip() else "Please enter a response.",
@@ -214,7 +216,7 @@ def _build_model() -> ChatOpenAI:
         base_url=os.getenv("LM_STUDIO_BASE_URL", "http://localhost:1234/v1"),
         api_key=SecretStr(os.getenv("LM_STUDIO_API_KEY", "lm-studio")),
         temperature=0.1,
-        max_tokens=600,
+        max_tokens=600,  # pyright: ignore[reportCallIssue]
     )
 
 
@@ -531,7 +533,7 @@ def _render_markdown(text: str) -> None:
 
 
 def _run_interactive(engine: str, max_sources: int, max_page_chars: int, max_context_chars: int) -> None:
-    print("Verified Dev Copilot (interactive). Type 'exit' to quit, '/help' for commands.")
+    print("Verified Dev Copilot (interactive). Type '/exit' to quit, '/help' for commands.")
     while True:
         try:
             prompt = input("\n> ").strip()
@@ -540,7 +542,7 @@ def _run_interactive(engine: str, max_sources: int, max_page_chars: int, max_con
             return
         if not prompt:
             continue
-        if prompt.lower() in {"exit", "quit"}:
+        if prompt.lower() in {"/exit", "/quit"}:
             print("Bye.")
             return
         if prompt == "/help":
