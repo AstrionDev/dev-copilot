@@ -38,7 +38,10 @@ python app/agent.py --interactive
 ## Notes
 - DuckDuckGo + StackOverflow require outbound network access.
 - The default LLM config targets a local OpenAI-compatible endpoint:
-  `base_url="http://localhost:1234/v1"` (e.g., LM Studio).
+  `LM_STUDIO_BASE_URL="http://localhost:1234/v1"` (e.g., LM Studio).
+- Set `LM_STUDIO_API_KEY` if your local endpoint requires a key (default: `lm-studio`).
+- Override the model with `LM_STUDIO_MODEL` (default: `qwen/qwen-3-1.7b`).
+- `.env` is supported if you install `python-dotenv`.
 - The agent asks for human input when it needs missing details (OS, versions, errors).
 - The agent asks for approval only when it wants to use web/tools for research.
 - Install `questionary` for nicer interactive prompts (arrow-key selection + input highlight).

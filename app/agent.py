@@ -2,7 +2,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+from typing import Any
+
+from pydantic import SecretStr
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except Exception:
+    pass
 from dataclasses import dataclass
 
 from langchain_openai import ChatOpenAI
@@ -41,7 +52,6 @@ Requirements:
 - Prefer official documentation; use StackOverflow as supporting evidence.
 - Never invent citations. Only cite URLs that appear in the provided context.
 - End with a short Sources list containing the exact URLs you relied on.
-- Do not reveal hidden reasoning. Do not output <think> blocks.
 """
 
 ANALYSIS_PROMPT = """You are a planning module for a developer assistant.
@@ -200,9 +210,9 @@ def _collect_human_info(questions: list[str]) -> dict[str, str]:
 
 def _build_model() -> ChatOpenAI:
     return ChatOpenAI(
-        model="qwen/qwen-3-1.7b",
-        base_url="http://localhost:1234/v1",
-        api_key="lm-studio",
+        model=os.getenv("LM_STUDIO_MODEL", "qwen/qwen-3-1.7b"),
+        base_url=os.getenv("LM_STUDIO_BASE_URL", "http://localhost:1234/v1"),
+        api_key=SecretStr(os.getenv("LM_STUDIO_API_KEY", "lm-studio")),
         temperature=0.1,
         max_tokens=600,
     )
